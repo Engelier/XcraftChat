@@ -1,0 +1,10 @@
+name: XcraftChat
+main: de.xcraft.engelier.chat.Chat
+version: 0.1
+author: Engelier
+load: postworld
+commands:
+  xchat:
+    description: Reloads the config
+    usage: /<command>
+    permission: XcraftChat.reload
