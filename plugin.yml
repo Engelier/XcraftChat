@@ -8,3 +8,7 @@ commands:
     description: Reloads the config
     usage: /<command>
     permission: XcraftChat.reload
+permissions:
+  XcraftChat.reload:
+    default: OP
+    description: allows you to reload the config
