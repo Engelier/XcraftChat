@@ -1,6 +1,6 @@
 name: XcraftChat
 main: de.xcraft.engelier.chat.Chat
-version: 0.1
+version: 0.2
 author: Engelier
 load: postworld
 commands:

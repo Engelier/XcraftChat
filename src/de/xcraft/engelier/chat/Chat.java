@@ -105,29 +105,11 @@ public class Chat extends JavaPlugin {
 			config.setProperty("config/chatformat", "[$tag$] $playername$: $message$");
 			config.setProperty("config/timeformat", "HH:mm:ss");
 			config.setProperty("permissions/some.permission.node/tag", "&cX&9craft&aChat&f");
+			config.setProperty("users/Engelier/tag", "&cX&9craft&aDev&f");
 			config.save();
 		}
 				
-		int i = 0;
-		int d1 = 0;
-		int d2 = 0;
-		String chatFormat = config.getString("config/chatformat");
-		
-		while (i < chatFormat.length()) {
-			if ((d1 = chatFormat.indexOf("$", i)) == -1) {
-				break;
-			}
-			d1++;
-			
-			if ((d2 = chatFormat.indexOf("$", d1)) == -1) {
-				break;
-			}
-			
-			String tag = chatFormat.substring(d1, d2);
-			toReplace.add(tag);
-			i = ++d2;
-		}
-		
+		parseChatFormat(config.getString("config/chatformat", "<$playername$> $message$"));
 	}
 	
 	private void registerPermissions() {
@@ -146,10 +128,30 @@ public class Chat extends JavaPlugin {
 		}
 	}
 	
+	private void parseChatFormat(String chatFormat) {
+		int i = 0;
+		int d1 = 0;
+		int d2 = 0;
+		
+		while (i < chatFormat.length()) {
+			if ((d1 = chatFormat.indexOf("$", i)) == -1) {
+				break;
+			}
+			d1++;
+			
+			if ((d2 = chatFormat.indexOf("$", d1)) == -1) {
+				break;
+			}
+			
+			String tag = chatFormat.substring(d1, d2);
+			toReplace.add(tag);
+			i = ++d2;
+		}		
+	}
+	
 	public String getChatFormat(Player player) {
 		Map<String, String> values = new HashMap<String, String>();
-		String dateFormatString = config.getString("config/timeformat");
-		DateFormat dateFormat = new SimpleDateFormat(dateFormatString != null ? dateFormatString : "HH:mm:ss");
+		DateFormat dateFormat = new SimpleDateFormat(config.getString("config/timeformat", "HH:mm:ss"));
 		
 		values.put("world", player.getWorld().getName());
 		values.put("playername", "%1$s");
@@ -166,8 +168,13 @@ public class Chat extends JavaPlugin {
 			}
 		}
 		
-		String chatFormat = config.getString("config/chatformat");
-		if (chatFormat == null) chatFormat = "<$playername$> $message$";
+		if (config.getNode("users/" + player.getName()) != null) {
+			for (String userTag : config.getKeys("users/" + player.getName())) {
+				values.put(userTag, config.getString("users/" + player.getName() + "/" + userTag));
+			}
+		}
+		
+		String chatFormat = config.getString("config/chatformat", "<$playername$> $message$");
 		
 		for (String replaceMe : toReplace) {
 			if (values.get(replaceMe) != null) {
