@@ -45,7 +45,13 @@ public class Chat extends JavaPlugin {
 		pm = getServer().getPluginManager();
 		
 		loadConfig();
-		registerPermissions();
+		getServer().getScheduler().scheduleSyncDelayedTask(this, new Runnable() {
+			@Override
+			public void run() {
+				registerPermissions();
+				
+			}
+		});
 		
 		Plugin permCheck;
 		if ((permCheck = pm.getPlugin("Permissions")) != null) checkPermissionPlugin(permCheck);
