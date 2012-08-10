@@ -1,16 +1,18 @@
 package de.xcraft.engelier.chat;
 
-import org.bukkit.event.player.PlayerChatEvent;
-import org.bukkit.event.player.PlayerListener;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 
-public class ListenerPlayer extends PlayerListener {
+public class ListenerPlayer implements Listener {
 	private Chat chat;
 	
 	public ListenerPlayer (Chat chat) {
 		this.chat = chat;
 	}
 	
-	public void onPlayerChat(PlayerChatEvent event) {
+	@EventHandler
+	public void onPlayerChat(AsyncPlayerChatEvent event) {
 		event.setFormat(chat.getChatFormat(event.getPlayer()));
 	}
 }

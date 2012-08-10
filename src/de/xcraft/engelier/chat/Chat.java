@@ -56,10 +56,9 @@ public class Chat extends JavaPlugin {
 		Plugin permCheck;
 		if ((permCheck = pm.getPlugin("Permissions")) != null) checkPermissionPlugin(permCheck);
 		
-		pm.registerEvent(Event.Type.PLAYER_CHAT, playerListener, Event.Priority.Lowest, this);
-		pm.registerEvent(Event.Type.PLUGIN_ENABLE, pluginListener, Event.Priority.Normal, this);
-		pm.registerEvent(Event.Type.PLUGIN_DISABLE, pluginListener, Event.Priority.Normal, this);
-		
+		pm.registerEvents(playerListener, this);
+		pm.registerEvents(pluginListener, this);
+				
 		log.info(getNameBrackets() + "enabled.");
 	}
 
@@ -190,11 +189,7 @@ public class Chat extends JavaPlugin {
 			}
 		}
 		
-		int i = 0;
-		while ((i = chatFormat.indexOf("&")) > -1) {
-			String colorCode = chatFormat.substring(i, i + 2);
-			chatFormat = chatFormat.replace(colorCode, ChatColor.getByCode(Integer.parseInt(colorCode.substring(1), 16)).toString());
-		}
+		chatFormat = ChatColor.translateAlternateColorCodes('&', chatFormat);
 		
 		return chatFormat;
 	}
