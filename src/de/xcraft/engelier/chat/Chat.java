@@ -14,7 +14,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.Plugin;
@@ -78,12 +77,34 @@ public class Chat extends JavaPlugin {
 	
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String cmdLabel, String[] args) {
-		if (sender instanceof Player) {
-			if (!hasPermission((Player) sender, "XcraftChat.reload")) return true;
+		if (cmd.getName().equalsIgnoreCase("xchat")) {
+			if (sender instanceof Player) {
+				if (!hasPermission((Player) sender, "XcraftChat.reload")) return true;
+			}
+		
+			loadConfig();
+			sender.sendMessage(ChatColor.DARK_PURPLE + getNameBrackets() + ChatColor.DARK_AQUA + "config reloaded.");
 		}
 		
-		loadConfig();
-		sender.sendMessage(ChatColor.DARK_PURPLE + getNameBrackets() + ChatColor.DARK_AQUA + "config reloaded.");
+		if (cmd.getName().equalsIgnoreCase("a")) {
+			if (!sender.hasPermission("XcraftChat.admin"))
+				return true;
+						
+			String joinedArgs = "";
+			for (int i = 0; i < args.length; i++) {
+				joinedArgs += args[i] + " ";
+			}
+			
+			String chatFormat = ChatColor.RED + "[AdminChat] " + ChatColor.WHITE + getChatFormat(sender);
+			String message = chatFormat.replace("%1$s", sender.getName());
+			message = message.replace("%2$s", joinedArgs);
+			getServer().getConsoleSender().sendMessage(message);
+			for (Player player : getServer().getOnlinePlayers()) {
+				if (player.hasPermission("XcraftChat.admin")) {
+					player.sendMessage(message);
+				}
+			}
+		}
 		
 		return true;
 	}
@@ -154,18 +175,24 @@ public class Chat extends JavaPlugin {
 		}		
 	}
 	
-	public String getChatFormat(Player player) {
+	public String getChatFormat(CommandSender sender) {
 		Map<String, String> values = new HashMap<String, String>();
 		DateFormat dateFormat = new SimpleDateFormat(config.getString("config/timeformat", "HH:mm:ss"));
 		
-		values.put("world", player.getWorld().getName());
+		if (sender instanceof Player) {
+			values.put("world", ((Player) sender).getWorld().getName());
+			values.put("health", "" + ((Player) sender).getHealth());
+		} else {
+			values.put("world", "CONSOLE");
+			values.put("health", "0");
+		}
+		
 		values.put("playername", "%1$s");
 		values.put("message", "%2$s");
-		values.put("health", "" + player.getHealth());
 		values.put("time", dateFormat.format(new Date()));
 		
 		for (String permission : config.getKeys("permissions")) {
-			if (hasPermission(player, permission)) {
+			if (sender.hasPermission(permission)) {
 				for (String var : config.getKeys("permissions/" + permission)) {
 					values.put(var, config.getString("permissions/" + permission + "/" + var));
 				}
@@ -173,9 +200,9 @@ public class Chat extends JavaPlugin {
 			}
 		}
 		
-		if (config.getNode("users/" + player.getName()) != null) {
-			for (String userTag : config.getKeys("users/" + player.getName())) {
-				values.put(userTag, config.getString("users/" + player.getName() + "/" + userTag));
+		if (config.getNode("users/" + sender.getName()) != null) {
+			for (String userTag : config.getKeys("users/" + sender.getName())) {
+				values.put(userTag, config.getString("users/" + sender.getName() + "/" + userTag));
 			}
 		}
 		

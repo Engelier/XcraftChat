@@ -13,6 +13,12 @@ public class ListenerPlayer implements Listener {
 	
 	@EventHandler
 	public void onPlayerChat(AsyncPlayerChatEvent event) {
+		if (event.getPlayer().hasPermission("chat.deny")) {
+			event.getPlayer().sendMessage(chat.getConfig().getString("config.denymessage").replaceAll("&([a-f0-9])", "\u00A7$1"));
+			event.setCancelled(true);
+			return;
+		}
+		
 		event.setFormat(chat.getChatFormat(event.getPlayer()));
 	}
 }

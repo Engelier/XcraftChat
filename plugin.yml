@@ -1,14 +1,20 @@
 name: XcraftChat
 main: de.xcraft.engelier.chat.Chat
-version: 0.3
+version: 0.5
 author: Engelier
 load: postworld
 commands:
   xchat:
     description: Reloads the config
     usage: /<command>
+  a:
+    description: Use the admin chat
+    usage: /a <message>
 #    permission: XcraftChat.reload
 permissions:
   XcraftChat.reload:
     default: OP
     description: allows you to reload the config
+  XcraftChat.admin:
+    default: OP
+    description: allows using the adminchat
