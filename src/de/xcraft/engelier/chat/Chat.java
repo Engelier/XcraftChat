@@ -105,7 +105,25 @@ public class Chat extends JavaPlugin {
 				}
 			}
 		}
-		
+		if (cmd.getName().equalsIgnoreCase("c")) {
+			if (!sender.hasPermission("XcraftChat.team"))
+				return true;
+						
+			String joinedArgs = "";
+			for (int i = 0; i < args.length; i++) {
+				joinedArgs += args[i] + " ";
+			}
+			
+			String chatFormat = ChatColor.GREEN + "[TeamChat] " + ChatColor.WHITE + getChatFormat(sender);
+			String message = chatFormat.replace("%1$s", sender.getName());
+			message = message.replace("%2$s", joinedArgs);
+			getServer().getConsoleSender().sendMessage(message);
+			for (Player player : getServer().getOnlinePlayers()) {
+				if (player.hasPermission("XcraftChat.team")) {
+					player.sendMessage(message);
+				}
+			}
+		}
 		return true;
 	}
 	
@@ -182,9 +200,11 @@ public class Chat extends JavaPlugin {
 		if (sender instanceof Player) {
 			values.put("world", ((Player) sender).getWorld().getName());
 			values.put("health", "" + ((Player) sender).getHealth());
+			values.put("xp", "" + ((Player) sender).getLevel());
 		} else {
 			values.put("world", "CONSOLE");
 			values.put("health", "0");
+			values.put("xp", "")";
 		}
 		
 		values.put("playername", "%1$s");
