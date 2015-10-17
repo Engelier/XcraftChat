@@ -9,7 +9,10 @@ commands:
     usage: /<command>
   a:
     description: Use the admin chat
-    usage: /a <message>
+    usage: /<command> <message>
+  c:
+    description: Use the admin chat
+    usage: /<command> <message>
 #    permission: XcraftChat.reload
 permissions:
   XcraftChat.reload:
@@ -18,3 +21,6 @@ permissions:
   XcraftChat.admin:
     default: OP
     description: allows using the adminchat
+  XcraftChat.team:
+    default: OP
+    description: allows using the teamchat
